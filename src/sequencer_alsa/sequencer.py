@@ -297,7 +297,8 @@ class Sequencer(object):
                 mev.value = ev.data.control.value
             if ev.time.time.tv_nsec:
                 # convert to ms
-                mev.msdeay = \                    (ev.time.time.tv_nsec / 1e6) + (ev.time.time.tv_sec * 1e3)
+                mev.msdeay = \
+                    (ev.time.time.tv_nsec / 1e6) + (ev.time.time.tv_sec * 1e3)
             else:
                 mev.tick = ev.time.tick
             return mev
