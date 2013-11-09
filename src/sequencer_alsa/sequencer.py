@@ -279,7 +279,7 @@ class Sequencer(object):
     def event_read(self):
         ev = S.event_input(self.client)
         if ev and (ev < 0): self._error(ev)
-        if ev and ev.type in (S.SND_SEQ_EVENT_NOTEON, S.SND_SEQ_EVENT_NOTEOFF):
+        if ev and ev.type in (S.SND_SEQ_EVENT_NOTEON, S.SND_SEQ_EVENT_NOTEOFF, S.SND_SEQ_EVENT_CONTROLLER):
             if ev.type == S.SND_SEQ_EVENT_NOTEON:
                 mev = midi.NoteOnEvent()
                 mev.channel = ev.data.note.channel
@@ -290,10 +290,14 @@ class Sequencer(object):
                 mev.channel = ev.data.note.channel
                 mev.pitch = ev.data.note.note
                 mev.velocity = ev.data.note.velocity
+            elif ev.type == S.SND_SEQ_EVENT_CONTROLLER:
+                mev = midi.ControlChangeEvent()
+                mev.channel = ev.data.control.channel
+                mev.control = ev.data.control.param
+                mev.value = ev.data.control.value
             if ev.time.time.tv_nsec:
                 # convert to ms
-                mev.msdeay = \
-                    (ev.time.time.tv_nsec / 1e6) + (ev.time.time.tv_sec * 1e3)
+                mev.msdeay = \                    (ev.time.time.tv_nsec / 1e6) + (ev.time.time.tv_sec * 1e3)
             else:
                 mev.tick = ev.time.tick
             return mev
